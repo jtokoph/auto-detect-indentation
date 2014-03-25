@@ -1,14 +1,13 @@
 {
   "name": "auto-detect-indentation",
   "main": "./lib/auto-detect-indentation",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Auto-detect indentation of opened files.",
   "author": {
-      "name": "Jason Tokoph",
-      "email": "jason@tokoph.net"
+    "name": "Jason Tokoph",
+    "email": "jason@tokoph.net"
   },
-  "activationEvents": [
-  ],
+  "activationEvents": [],
   "repository": "https://github.com/jtokoph/auto-detect-indentation",
   "license": "MIT",
   "engines": {
