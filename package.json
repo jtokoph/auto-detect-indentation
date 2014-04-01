@@ -1,7 +1,7 @@
 {
   "name": "auto-detect-indentation",
   "main": "./lib/auto-detect-indentation",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Automatically detect indentation of opened files.",
   "author": {
     "name": "Jason Tokoph",
