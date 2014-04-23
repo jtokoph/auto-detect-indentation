@@ -23,9 +23,11 @@ module.exports =
     # loop through more than 100 lines only if we haven't found any spaces yet
     for i in [0..lineCount-1] when (i < 100 or not found)
 
-      # TODO: this don't help much until we can listen for an event post parsing
-      continue if editor.isBufferRowCommented i
-      firstSpaces = editor.lineForBufferRow(i).match /^([ \t]+)./m
+      # TODO: this doesn't help much until we can listen for an event post parsing
+      # continue if editor.isBufferRowCommented i
+
+      firstSpaces = editor.lineForBufferRow(i).match /^([ \t]+)[^ \t]/m
+
       if firstSpaces
         found = true
         spaceChars = firstSpaces[1]
@@ -33,12 +35,14 @@ module.exports =
         if spaceChars[0] is '\t'
           numLinesWithTabs++
         else
-          numLinesWithSpaces++
-          # NOTE: Assumes nobody uses single space tabbing
-          # This prevents C style block comments from tricking the detection
-          # TODO: once we can listen for an 'after-parsed' event we can remove the <= 1 hack
-          shortest = spaceChars.length if spaceChars.length < shortest or shortest <= 1
+          length = spaceChars.length
 
+          # assume nobody uses single space spacing
+          continue if length is 1
+
+          numLinesWithSpaces++
+
+          shortest = length if length < shortest or shortest is 0
 
     if found
       if numLinesWithTabs > numLinesWithSpaces

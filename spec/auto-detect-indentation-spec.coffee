@@ -118,3 +118,17 @@ describe 'auto-detect-indentation', ->
 
     it "will report soft tabs", ->
       expect(editor.getSoftTabs()).toBe true
+
+  describe 'when a file is opened with c style block comments near the end or line 100', ->
+
+    beforeEach ->
+      atom.config.set "editor.tabLength", 4
+      atom.config.set "editor.softTabs", false
+      workspaceView.openSync Path.join(__dirname, './fixtures/c-style-block-comments-at-end.c')
+      editor = workspace.getActiveEditor()
+
+    it "will report 2 spaces", ->
+      expect(editor.getTabLength()).toBe 2
+
+    it "will report soft tabs", ->
+      expect(editor.getSoftTabs()).toBe true
