@@ -29,7 +29,6 @@ module.exports =
       firstSpaces = editor.lineForBufferRow(i).match /^([ \t]+)[^ \t]/m
 
       if firstSpaces
-        found = true
         spaceChars = firstSpaces[1]
 
         if spaceChars[0] is '\t'
@@ -44,6 +43,8 @@ module.exports =
 
           shortest = length if length < shortest or shortest is 0
 
+        found = true
+
     if found
       if numLinesWithTabs > numLinesWithSpaces
         editor.setSoftTabs false
@@ -51,5 +52,8 @@ module.exports =
       else
         editor.setSoftTabs true
         editor.setTabLength shortest
+    else
+        editor.setSoftTabs atom.config.get("editor.softTabs")
+        editor.setTabLength atom.config.get("editor.tabLength")
 
 Subscriber.extend module.exports

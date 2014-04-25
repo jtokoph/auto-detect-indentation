@@ -132,3 +132,20 @@ describe 'auto-detect-indentation', ->
 
     it "will report soft tabs", ->
       expect(editor.getSoftTabs()).toBe true
+
+  describe 'when a file is opened only comments', ->
+
+    beforeEach ->
+      atom.config.set "editor.tabLength", 4
+      atom.config.set "editor.softTabs", false
+      workspaceView.openSync Path.join(__dirname, './fixtures/only-comments.rb')
+      editor = workspace.getActiveEditor()
+
+    it "will pass this test because it didn't infinite loop", ->
+      expect(true).toBe true
+
+    it "will report 4 spaces", ->
+      expect(editor.getTabLength()).toBe 4
+
+    it "will report tabs", ->
+      expect(editor.getSoftTabs()).toBe false
