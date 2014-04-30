@@ -9,3 +9,5 @@ You might have atom configured to use 4 spaces for tabs but open a rails project
 
 * Use some sort of calculation (frequency, average, gcd) to figure out the most frequent tab setting in a file (currently gets smallest tab in first 100 lines)
 * Waiting on event to listen for when a newly opened file has been parsed so we can depend on `editor.isBufferRowCommented`
+
+[![Build Status](https://travis-ci.org/jtokoph/auto-detect-indentation.svg?branch=master)](https://travis-ci.org/jtokoph/auto-detect-indentation)
