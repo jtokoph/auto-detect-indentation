@@ -48,12 +48,12 @@ module.exports =
     if found
       if numLinesWithTabs > numLinesWithSpaces
         editor.setSoftTabs false
-        editor.setTabLength atom.config.get("editor.tabLength")
+        editor.setTabLength atom.config.get(editor.getRootScopeDescriptor(), "editor.tabLength")
       else
         editor.setSoftTabs true
         editor.setTabLength shortest
     else
-        editor.setSoftTabs atom.config.get("editor.softTabs")
-        editor.setTabLength atom.config.get("editor.tabLength")
+        editor.setSoftTabs atom.config.get(editor.getRootScopeDescriptor(), "editor.softTabs")
+        editor.setTabLength atom.config.get(editor.getRootScopeDescriptor(), "editor.tabLength")
 
 Subscriber.extend module.exports
