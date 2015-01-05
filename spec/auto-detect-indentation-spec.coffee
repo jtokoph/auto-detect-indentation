@@ -12,6 +12,7 @@ describe 'auto-detect-indentation', ->
     # Require language-c in order to parse comments
     waitsForPromise ->
       atom.packages.activatePackage("language-c")
+      atom.packages.activatePackage("language-sass")
 
     atom.workspaceView = workspaceView = new WorkspaceView
     atom.workspace = workspace = atom.workspaceView.model
@@ -138,7 +139,7 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 4
       atom.config.set "editor.softTabs", false
-      workspaceView.openSync Path.join(__dirname, './fixtures/only-comments.rb')
+      workspaceView.openSync Path.join(__dirname, './fixtures/only-comments.scss')
       editor = workspace.getActiveEditor()
 
     it "will pass this test because it didn't infinite loop", ->
