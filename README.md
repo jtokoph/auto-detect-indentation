@@ -11,3 +11,7 @@ You might have atom configured to use 4 spaces for tabs but open a rails project
 * Waiting on event to listen for when a newly opened file has been parsed so we can depend on `editor.isBufferRowCommented`
 
 [![Build Status](https://travis-ci.org/jtokoph/auto-detect-indentation.svg?branch=master)](https://travis-ci.org/jtokoph/auto-detect-indentation)
+
+# Special Thanks To Contributors
+
+[François Galea](https://github.com/fgalea)
