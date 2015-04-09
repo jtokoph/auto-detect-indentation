@@ -1,17 +1,18 @@
-{Subscriber} = require 'emissary'
+{CompositeDisposable} = require 'atom'
 
 module.exports =
   activate: (state) ->
-    @subscribe atom.workspace.eachEditor (editor) =>
+    @disposables = new CompositeDisposable
+    @disposables.add atom.workspace.observeTextEditors (editor) =>
       @_handleLoad editor
 
   _handleLoad: (editor) ->
     @_loadSettingsForEditor editor
-    @subscribe editor.buffer, 'saved', =>
+    @disposables.add editor.buffer.onDidSave =>
       @_loadSettingsForEditor editor
 
   deactivate: ->
-    @unsubscribe()
+    @disposables.dispose()
 
   _loadSettingsForEditor: (editor) ->
     lineCount = editor.getLineCount()
@@ -26,7 +27,7 @@ module.exports =
       # TODO: this doesn't help much until we can listen for an event post parsing
       # continue if editor.isBufferRowCommented i
 
-      firstSpaces = editor.lineForBufferRow(i).match /^([ \t]+)[^ \t]/m
+      firstSpaces = editor.lineTextForBufferRow(i).match /^([ \t]+)[^ \t]/m
 
       if firstSpaces
         spaceChars = firstSpaces[1]
@@ -48,12 +49,10 @@ module.exports =
     if found
       if numLinesWithTabs > numLinesWithSpaces
         editor.setSoftTabs false
-        editor.setTabLength atom.config.get(editor.getRootScopeDescriptor(), "editor.tabLength")
+        editor.setTabLength atom.config.get("editor.tabLength", scope: editor.getRootScopeDescriptor().scopes)
       else
         editor.setSoftTabs true
         editor.setTabLength shortest
     else
-        editor.setSoftTabs atom.config.get(editor.getRootScopeDescriptor(), "editor.softTabs")
-        editor.setTabLength atom.config.get(editor.getRootScopeDescriptor(), "editor.tabLength")
-
-Subscriber.extend module.exports
+        editor.setSoftTabs atom.config.get("editor.softTabs", scope: editor.getRootScopeDescriptor().scopes)
+        editor.setTabLength atom.config.get("editor.tabLength", scope: editor.getRootScopeDescriptor().scopes)
