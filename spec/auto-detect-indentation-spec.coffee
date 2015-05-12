@@ -1,8 +1,7 @@
-{WorkspaceView} = require 'atom'
 Path = require 'path'
 
 describe 'auto-detect-indentation', ->
-  [editor, workspace, workspaceView, activationPromise] = []
+  [editor, workspace, activationPromise] = []
 
   beforeEach ->
 
@@ -12,21 +11,21 @@ describe 'auto-detect-indentation', ->
     # Require language-c in order to parse comments
     waitsForPromise ->
       atom.packages.activatePackage("language-c")
+
+    waitsForPromise ->
       atom.packages.activatePackage("language-sass")
-
-    atom.workspaceView = workspaceView = new WorkspaceView
-    atom.workspace = workspace = atom.workspaceView.model
-
-  afterEach ->
-    workspace.destroy()
 
   describe 'when a file is opened with 4 spaces', ->
 
     beforeEach ->
       atom.config.set "editor.tabLength", 2
       atom.config.set "editor.softTabs", false
-      workspaceView.openSync Path.join(__dirname, './fixtures/4-spaces.rb')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/4-spaces.rb')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will report 4 spaces", ->
       expect(editor.getTabLength()).toBe 4
@@ -39,8 +38,12 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 4
       atom.config.set "editor.softTabs", false
-      workspaceView.openSync Path.join(__dirname, './fixtures/2-spaces.py')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/2-spaces.py')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will report 2 spaces", ->
       expect(editor.getTabLength()).toBe 2
@@ -55,8 +58,12 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 2
       atom.config.set "editor.softTabs", false
-      workspaceView.openSync Path.join(__dirname, './fixtures/lined-up-params.py')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/lined-up-params.py')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will report 4 spaces", ->
       expect(editor.getTabLength()).toBe 4
@@ -69,8 +76,12 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 4
       atom.config.set "editor.softTabs", true
-      workspaceView.openSync Path.join(__dirname, './fixtures/tabs.rb')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/tabs.rb')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will report hard tabs", ->
       expect(editor.getSoftTabs()).toBe false
@@ -83,8 +94,12 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 2
       atom.config.set "editor.softTabs", true
-      workspaceView.openSync Path.join(__dirname, './fixtures/mostly-tabs.rb')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/mostly-tabs.rb')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will report hard tabs", ->
       expect(editor.getSoftTabs()).toBe false
@@ -97,8 +112,12 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 2
       atom.config.set "editor.softTabs", false
-      workspaceView.openSync Path.join(__dirname, './fixtures/mostly-spaces.rb')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/mostly-spaces.rb')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will report 6 spaces", ->
       expect(editor.getTabLength()).toBe 6
@@ -111,8 +130,12 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 4
       atom.config.set "editor.softTabs", false
-      workspaceView.openSync Path.join(__dirname, './fixtures/c-style-block-comments.c')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/c-style-block-comments.c')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will report 2 spaces", ->
       expect(editor.getTabLength()).toBe 2
@@ -125,8 +148,12 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 4
       atom.config.set "editor.softTabs", false
-      workspaceView.openSync Path.join(__dirname, './fixtures/c-style-block-comments-at-end.c')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/c-style-block-comments-at-end.c')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will report 2 spaces", ->
       expect(editor.getTabLength()).toBe 2
@@ -139,8 +166,12 @@ describe 'auto-detect-indentation', ->
     beforeEach ->
       atom.config.set "editor.tabLength", 4
       atom.config.set "editor.softTabs", false
-      workspaceView.openSync Path.join(__dirname, './fixtures/only-comments.scss')
-      editor = workspace.getActiveEditor()
+
+      waitsForPromise ->
+        atom.workspace.open Path.join(__dirname, './fixtures/only-comments.scss')
+
+      runs ->
+        editor = atom.workspace.getActiveTextEditor()
 
     it "will pass this test because it didn't infinite loop", ->
       expect(true).toBe true
