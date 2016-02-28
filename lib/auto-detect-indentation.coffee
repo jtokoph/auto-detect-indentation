@@ -1,25 +1,57 @@
 {CompositeDisposable} = require 'atom'
 
+commandDisposable = null
+indentationListView = null
+indentationStatusView = null
+
+createIndentationListView = =>
+  unless indentationListView?
+    IndentationListView = require './indentation-list-view'
+    indentationListView = new IndentationListView()
+  indentationListView.toggle()
+
 module.exports =
   activate: (state) ->
     @disposables = new CompositeDisposable
     @disposables.add atom.workspace.observeTextEditors (editor) =>
       @_handleLoad editor
+    commandDisposable = atom.commands.add('atom-text-editor', 'indentation-selector:show', createIndentationListView)
 
   _handleLoad: (editor) ->
     @_loadSettingsForEditor editor
-
-    @disposables.add editor.buffer.onDidSave =>
-      @_loadSettingsForEditor editor
+    editor.syntaxLoaded = false
 
     if editor.displayBuffer?.onDidTokenize
       @disposables.add editor.displayBuffer.onDidTokenize =>
-        @_loadSettingsForEditor editor
+        if !editor.syntaxLoaded
+          editor.syntaxLoaded = true
+          @_loadSettingsForEditor editor
 
   deactivate: ->
     @disposables.dispose()
+    commandDisposable = null
+
+  consumeStatusBar: (statusBar) ->
+    IndentationStatusView = require './indentation-status-view'
+    indentationStatusView = new IndentationStatusView().initialize(statusBar)
+    indentationStatusView.attach()
 
   _loadSettingsForEditor: (editor) ->
+    # Disable atom's native detection of spaces/tabs
+    editor.shouldUseSoftTabs = ->
+      @softTabs
+
+    # Trigger "did-change-indentation" event when indentation is changed
+    editor.setSoftTabs = (@softTabs) ->
+      @emitter.emit 'did-change-indentation'
+      @softTabs
+
+    # Trigger "did-change-indentation" event when indentation is changed
+    editor.setTabLength = (tabLength) ->
+      value = @displayBuffer.setTabLength(tabLength)
+      @emitter.emit 'did-change-indentation'
+      value
+
     lineCount = editor.getLineCount()
     shortest = 0
     numLinesWithTabs = 0

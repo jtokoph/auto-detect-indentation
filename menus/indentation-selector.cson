@@ -1,0 +1,13 @@
+'menu': [
+  'label': 'Edit'
+  'submenu': [
+    'label': 'Select Indentation'
+    'command': 'indentation-selector:show'
+  ]
+]
+
+'context-menu':
+  '.overlayer': [
+    'label': 'Change Indentation'
+    'command': 'indentation-selector:show'
+  ]
