@@ -8,8 +8,13 @@ module.exports =
 
   _handleLoad: (editor) ->
     @_loadSettingsForEditor editor
+
     @disposables.add editor.buffer.onDidSave =>
       @_loadSettingsForEditor editor
+
+    if editor.displayBuffer?.onDidTokenize
+      @disposables.add editor.displayBuffer.onDidTokenize =>
+        @_loadSettingsForEditor editor
 
   deactivate: ->
     @disposables.dispose()
@@ -24,8 +29,8 @@ module.exports =
     # loop through more than 100 lines only if we haven't found any spaces yet
     for i in [0..lineCount-1] when (i < 100 or not found)
 
-      # TODO: this doesn't help much until we can listen for an event post parsing
-      # continue if editor.isBufferRowCommented i
+      # Skip comments
+      continue if editor.isBufferRowCommented i
 
       firstSpaces = editor.lineTextForBufferRow(i).match /^([ \t]+)[^ \t]/m
 
