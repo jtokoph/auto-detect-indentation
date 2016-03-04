@@ -29,6 +29,7 @@ class IndentationListView extends SelectListView
 
   confirmed: (indentation) ->
     editor = atom.workspace.getActiveTextEditor()
+    editor.manualIndentation = true
     editor.setSoftTabs indentation.softTabs
     if "tabLength" of indentation
       editor.setTabLength indentation.tabLength

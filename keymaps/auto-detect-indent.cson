@@ -1,8 +1,0 @@
-'.platform-darwin atom-text-editor':
-  'ctrl-I': 'indentation-selector:show'
-
-'.platform-win32 atom-text-editor':
-  'ctrl-I': 'indentation-selector:show'
-
-'.platform-linux atom-text-editor':
-  'ctrl-I': 'indentation-selector:show'

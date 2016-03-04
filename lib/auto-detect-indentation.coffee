@@ -19,11 +19,16 @@ module.exports =
 
   _handleLoad: (editor) ->
     @_loadSettingsForEditor editor
+    editor.manualIndentation = false
     editor.syntaxLoaded = false
+
+    @disposables.add editor.buffer.onDidSave =>
+      unless editor.manualIndentation
+        @_loadSettingsForEditor editor
 
     if editor.displayBuffer?.onDidTokenize
       @disposables.add editor.displayBuffer.onDidTokenize =>
-        if !editor.syntaxLoaded
+        unless editor.syntaxLoaded
           editor.syntaxLoaded = true
           @_loadSettingsForEditor editor
 
