@@ -2,12 +2,12 @@
   'label': 'Edit'
   'submenu': [
     'label': 'Select Indentation'
-    'command': 'indentation-selector:show'
+    'command': 'auto-detect-indentation:show-indentation-selector'
   ]
 ]
 
 'context-menu':
   '.overlayer': [
     'label': 'Change Indentation'
-    'command': 'indentation-selector:show'
+    'command': 'auto-detect-indentation:show-indentation-selector'
   ]

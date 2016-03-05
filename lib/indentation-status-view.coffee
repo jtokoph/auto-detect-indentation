@@ -14,17 +14,18 @@ class IndentationStatusView extends HTMLDivElement
   attach: ->
     @statusBarTile?.destroy()
     @statusBarTile =
-      @statusBar.addRightTile(item: this, priority: 10)
+      if atom.config.get 'auto-detect-indentation.showSpacingInStatusBar'
+        @statusBar.addRightTile(item: this, priority: 10)
     @updateIndentationText()
 
   handleEvents: ->
     @activeItemSubscription = atom.workspace.onDidChangeActivePaneItem =>
       @subscribeToActiveTextEditor()
 
-    @configSubscription = atom.config.observe 'indentation-selector.showOnRightSideOfStatusBar', =>
+    @configSubscription = atom.config.observe 'auto-detect-indentation.showSpacingInStatusBar', =>
       @attach()
 
-    clickHandler = => atom.commands.dispatch(atom.views.getView(@getActiveTextEditor()), 'indentation-selector:show')
+    clickHandler = => atom.commands.dispatch(atom.views.getView(@getActiveTextEditor()), 'auto-detect-indentation:show-indentation-selector')
     @addEventListener('click', clickHandler)
     @clickSubscription = new Disposable => @removeEventListener('click', clickHandler)
 

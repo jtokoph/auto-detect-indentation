@@ -7,7 +7,7 @@ class IndentationListView extends SelectListView
   initialize: ->
     super
 
-    @addClass('indentation-selector')
+    @addClass('auto-detect-indentation-selector')
     @list.addClass('mark-active')
 
   getFilterKey: ->

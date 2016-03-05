@@ -6,7 +6,7 @@ module.exports =
     @disposables = new CompositeDisposable
     @disposables.add atom.workspace.observeTextEditors (editor) =>
       @_handleLoad editor
-    @disposables.add atom.commands.add('atom-text-editor', 'indentation-selector:show', @createIndentationListView)
+    @disposables.add atom.commands.add('atom-text-editor', 'auto-detect-indentation:show-indentation-selector', @createIndentationListView)
 
     @indentationListView = null
     @indentationStatusView = null
@@ -70,6 +70,11 @@ module.exports =
     IndentationManager.setIndentation editor, indentation, true
 
   config:
+    showSpacingInStatusBar:
+      type: 'boolean'
+      default: true
+      title: 'Show spacing in status bar'
+      description: 'Show current editor\'s spacing settings in status bar'
     indentationTypes:
       type: 'array'
       items:
