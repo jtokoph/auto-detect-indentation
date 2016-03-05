@@ -36,5 +36,5 @@ You can add `auto-detect-indentation.indentationTypes` to your `config.cson` fil
 
 # Special Thanks To Contributors
 
-[François Galea](https://github.com/fgalea)
-[Roger Chen](https://github.com/rogerhub)
+- [François Galea](https://github.com/fgalea)
+- [Roger Chen](https://github.com/rogerhub)
