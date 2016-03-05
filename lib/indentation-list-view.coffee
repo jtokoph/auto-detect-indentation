@@ -1,5 +1,5 @@
 {SelectListView} = require 'atom-space-pen-views'
-IndentationChoices = require './indentation-choices'
+IndentationManager = require './indentation-manager'
 
 # View to display a list of indentations to apply to the current editor.
 module.exports =
@@ -29,12 +29,7 @@ class IndentationListView extends SelectListView
 
   confirmed: (indentation) ->
     editor = atom.workspace.getActiveTextEditor()
-    editor.manualIndentation = true
-    editor.setSoftTabs indentation.softTabs
-    if "tabLength" of indentation
-      editor.setTabLength indentation.tabLength
-    else
-      editor.setTabLength atom.config.get("editor.tabLength", scope: editor.getRootScopeDescriptor().scopes)
+    IndentationManager.setIndentation(editor, indentation)
     @cancel()
 
   attach: ->
@@ -48,6 +43,6 @@ class IndentationListView extends SelectListView
     else
       editor = atom.workspace.getActiveTextEditor()
       if editor
-        @currentIndentation = IndentationChoices.getIndentation editor
-        @setItems(IndentationChoices.getIndentations())
+        @currentIndentation = IndentationManager.getIndentation editor
+        @setItems(IndentationManager.getIndentations())
         @attach()

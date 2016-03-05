@@ -1,47 +1,56 @@
 {CompositeDisposable} = require 'atom'
-
-commandDisposable = null
-indentationListView = null
-indentationStatusView = null
-
-createIndentationListView = =>
-  unless indentationListView?
-    IndentationListView = require './indentation-list-view'
-    indentationListView = new IndentationListView()
-  indentationListView.toggle()
+IndentationManager = require './indentation-manager'
 
 module.exports =
   activate: (state) ->
     @disposables = new CompositeDisposable
     @disposables.add atom.workspace.observeTextEditors (editor) =>
       @_handleLoad editor
-    commandDisposable = atom.commands.add('atom-text-editor', 'indentation-selector:show', createIndentationListView)
+    @disposables.add atom.commands.add('atom-text-editor', 'indentation-selector:show', @createIndentationListView)
+
+    @indentationListView = null
+    @indentationStatusView = null
 
   _handleLoad: (editor) ->
-    @_loadSettingsForEditor editor
-    editor.manualIndentation = false
-    editor.syntaxLoaded = false
+    @_attach editor
 
-    @disposables.add editor.buffer.onDidSave =>
-      unless editor.manualIndentation
-        @_loadSettingsForEditor editor
+    onSaveDisposable = editor.buffer.onDidSave =>
+      if IndentationManager.isManuallyIndented editor
+        onSaveDisposable?.dispose()
+      else
+        indentation = IndentationManager.autoDetectIndentation editor
+        IndentationManager.setIndentation editor, indentation, true
 
     if editor.displayBuffer?.onDidTokenize
-      @disposables.add editor.displayBuffer.onDidTokenize =>
-        unless editor.syntaxLoaded
-          editor.syntaxLoaded = true
-          @_loadSettingsForEditor editor
+      onTokenizeDisposable = editor.displayBuffer.onDidTokenize =>
+        # This event fires when the grammar is first loaded.
+        # We re-analyze the file's indentation, in order to ignore indentation inside comments
+        @_attach editor
+        onTokenizeDisposable?.dispose()
+        onTokenizeDisposable = null
+    else
+      onTokenizeDisposable = null
+
+    editor.onDidDestroy ->
+      onSaveDisposable?.dispose()
+      onTokenizeDisposable?.dispose()
 
   deactivate: ->
     @disposables.dispose()
-    commandDisposable = null
+
+  createIndentationListView: =>
+    unless @indentationListView?
+      IndentationListView = require './indentation-list-view'
+      indentationListView = new IndentationListView()
+    indentationListView.toggle()
 
   consumeStatusBar: (statusBar) ->
-    IndentationStatusView = require './indentation-status-view'
-    indentationStatusView = new IndentationStatusView().initialize(statusBar)
+    unless @IndentationStatusView?
+      IndentationStatusView = require './indentation-status-view'
+      indentationStatusView = new IndentationStatusView().initialize(statusBar)
     indentationStatusView.attach()
 
-  _loadSettingsForEditor: (editor) ->
+  _attach: (editor) ->
     # Disable atom's native detection of spaces/tabs
     editor.shouldUseSoftTabs = ->
       @softTabs
@@ -57,47 +66,8 @@ module.exports =
       @emitter.emit 'did-change-indentation'
       value
 
-    lineCount = editor.getLineCount()
-    shortest = 0
-    numLinesWithTabs = 0
-    numLinesWithSpaces = 0
-    found = false
-
-    # loop through more than 100 lines only if we haven't found any spaces yet
-    for i in [0..lineCount-1] when (i < 100 or not found)
-
-      # Skip comments
-      continue if editor.isBufferRowCommented i
-
-      firstSpaces = editor.lineTextForBufferRow(i).match /^([ \t]+)[^ \t]/m
-
-      if firstSpaces
-        spaceChars = firstSpaces[1]
-
-        if spaceChars[0] is '\t'
-          numLinesWithTabs++
-        else
-          length = spaceChars.length
-
-          # assume nobody uses single space spacing
-          continue if length is 1
-
-          numLinesWithSpaces++
-
-          shortest = length if length < shortest or shortest is 0
-
-        found = true
-
-    if found
-      if numLinesWithTabs > numLinesWithSpaces
-        editor.setSoftTabs false
-        editor.setTabLength atom.config.get("editor.tabLength", scope: editor.getRootScopeDescriptor().scopes)
-      else
-        editor.setSoftTabs true
-        editor.setTabLength shortest
-    else
-        editor.setSoftTabs atom.config.get("editor.softTabs", scope: editor.getRootScopeDescriptor().scopes)
-        editor.setTabLength atom.config.get("editor.tabLength", scope: editor.getRootScopeDescriptor().scopes)
+    indentation = IndentationManager.autoDetectIndentation editor
+    IndentationManager.setIndentation editor, indentation, true
 
   config:
     indentationTypes:

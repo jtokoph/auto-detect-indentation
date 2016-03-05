@@ -1,5 +1,5 @@
 {Disposable} = require 'atom'
-IndentationChoices = require './indentation-choices'
+IndentationManager = require './indentation-manager'
 
 class IndentationStatusView extends HTMLDivElement
   initialize: (@statusBar) ->
@@ -63,7 +63,7 @@ class IndentationStatusView extends HTMLDivElement
   updateIndentationText: ->
     editor = @getActiveTextEditor()
     if editor
-      indentationName = IndentationChoices.getIndentation editor
+      indentationName = IndentationManager.getIndentation editor
       @indentationLink.textContent = indentationName
       @style.display = ''
     else
