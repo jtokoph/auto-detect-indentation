@@ -66,8 +66,9 @@ module.exports =
       @emitter.emit 'did-change-indentation'
       value
 
-    indentation = IndentationManager.autoDetectIndentation editor
-    IndentationManager.setIndentation editor, indentation, true
+    editor.displayBuffer.onDidTokenize () ->
+      indentation = IndentationManager.autoDetectIndentation editor
+      IndentationManager.setIndentation editor, indentation, true
 
   config:
     showSpacingInStatusBar:
