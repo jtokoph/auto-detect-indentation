@@ -51,18 +51,23 @@ module.exports =
     indentationStatusView.attach()
 
   _attach: (editor) ->
+    originalSetSoftTabs = editor.setSoftTabs
+    originalSetTabLength = editor.setTabLength
+
     # Disable atom's native detection of spaces/tabs
     editor.shouldUseSoftTabs = ->
       @softTabs
 
     # Trigger "did-change-indentation" event when indentation is changed
     editor.setSoftTabs = (@softTabs) ->
+      # another line
+      value = originalSetSoftTabs.call(editor, @softTabs)
       @emitter.emit 'did-change-indentation'
-      @softTabs
+      value
 
     # Trigger "did-change-indentation" event when indentation is changed
     editor.setTabLength = (tabLength) ->
-      value = @displayBuffer.setTabLength(tabLength)
+      value = originalSetTabLength.call(editor, tabLength)
       @emitter.emit 'did-change-indentation'
       value
 
