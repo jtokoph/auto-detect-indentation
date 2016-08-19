@@ -21,8 +21,8 @@ module.exports =
         indentation = IndentationManager.autoDetectIndentation editor
         IndentationManager.setIndentation editor, indentation, true
 
-    if editor.displayBuffer?.onDidTokenize
-      onTokenizeDisposable = editor.displayBuffer.onDidTokenize =>
+    if editor.buffer?.onDidTokenize
+      onTokenizeDisposable = editor.buffer.onDidTokenize =>
         # This event fires when the grammar is first loaded.
         # We re-analyze the file's indentation, in order to ignore indentation inside comments
         @_attach editor
