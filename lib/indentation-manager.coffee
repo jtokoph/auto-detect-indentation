@@ -63,11 +63,13 @@ module.exports =
   setIndentation: (editor, indentation, automatic = false) ->
     unless automatic
       manuallyIndented.add(editor)
-    if "softTabs" of indentation and indentation.softTabs != null
+    
+    if indentation.softTabs?
       editor.setSoftTabs indentation.softTabs
     else
       editor.setSoftTabs atom.config.get("editor.softTabs", scope: editor.getRootScopeDescriptor().scopes)
-    if "tabLength" of indentation
+    
+    if indentation.tabLength?
       editor.setTabLength indentation.tabLength
     else
       editor.setTabLength atom.config.get("editor.tabLength", scope: editor.getRootScopeDescriptor().scopes)
